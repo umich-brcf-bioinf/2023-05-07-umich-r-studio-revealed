@@ -25,7 +25,6 @@ body, td {
 
 ---
 
-
 ### Schedule
 | Time | Topic |
 | :---  | :----------------------------------------------------------- |
@@ -35,7 +34,8 @@ body, td {
 | 10:15 | **Break** |
 | 10:30 | [R Basics Continued](r-03-basics-continued.html) |
 | 12:00 | **Lunch** |
-|  1:00 | [Data Wrangling and Analysis with tidyverse](r-05-dplyr.html) |
+|  1:00 | [Packages and Bioconductor](r-04-bioconductor.html) |
+|       | [Data Wrangling and Analysis with tidyverse](r-05-dplyr.html) |
 |  2:30 | **Break** |
 |  2:45 | [Data Visualization with ggplot2](r-06-data-visualization.html) |
 |       | [Getting Help with R](r-07-r-help.html) |

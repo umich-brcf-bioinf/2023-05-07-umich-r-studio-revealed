@@ -1,5 +1,5 @@
 ---
-title: "Computational Foundations Workshop"
+title: "R/R-Studio Revealed Workshop"
 author: "UM Bioinformatics Core Workshop Team"
 output:
         html_document:

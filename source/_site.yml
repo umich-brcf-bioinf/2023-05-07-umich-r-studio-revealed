@@ -1,12 +1,12 @@
-name: "Computational Foundations"
+name: "R/R-Studio Revealed"
 output_dir: ../html
 navbar:
-  title: "Computational Foundations"
+  title: "R/R-Studio Revealed"
   type: inverse
   left:
-    - text: "Intro"
+    - text: "Welcome"
       href: Module00_Introduction.html
-    - text: "R and RStudio"
+    - text: "Intro to R and RStudio"
       menu:
         - text: "Introducing R and RStudio IDE"
           href: r-01-introduction.html
@@ -14,6 +14,8 @@ navbar:
           href: r-02-r-basics.html
         - text: "R Basics Continued"
           href: r-03-basics-continued.html
+    - text: "Data transformations and visualizations"
+      menu:
         - text: "Using Packages from Bioconductor"
           href: r-04-bioconductor.html
         - text: "Data Wrangling and Analyses with Tidyverse"
