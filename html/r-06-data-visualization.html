@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Data Visualization with ggplot2</title>
+
+<script src="site_libs/header-attrs-2.17/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/paper.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link rel="shortcut icon" href="favicon-16x16.png" />
+<!--
+Favicon from
+https://twemoji.twitter.com/
+https://favicon.io/emoji-favicons/computer/
+-->
+<meta name="google-site-verification" content="t-Wgs-RXt8xi94RSoFamxoD2P2h-Hh7M_t_iOuxFZUo" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Computational Foundations</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="Module00_Introduction.html">Intro</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    R and RStudio
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="r-01-introduction.html">Introducing R and RStudio IDE</a>
+    </li>
+    <li>
+      <a href="r-02-r-basics.html">R Basics</a>
+    </li>
+    <li>
+      <a href="r-03-basics-continued.html">R Basics Continued</a>
+    </li>
+    <li>
+      <a href="r-04-bioconductor.html">Using Packages from Bioconductor</a>
+    </li>
+    <li>
+      <a href="r-05-dplyr.html">Data Wrangling and Analyses with Tidyverse</a>
+    </li>
+    <li>
+      <a href="r-06-data-visualization.html">Data Visualizations with ggplot2</a>
+    </li>
+    <li>
+      <a href="r-07-r-help.html">Getting Help with R</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="Module99_Wrap_up.html">Wrap up</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Data Visualization with ggplot2</h1>
+
+</div>
+
+<div id="TOC">
+<ul>
+<li><a href="#overview" id="toc-overview">Overview</a></li>
+<li><a href="#grammar-of-graphics" id="toc-grammar-of-graphics">Grammar
+of graphics</a></li>
+<li><a href="#scatter-plots" id="toc-scatter-plots">Scatter plots</a>
+<ul>
+<li><a href="#storing-plots-as-objects"
+id="toc-storing-plots-as-objects">Storing plots as objects</a></li>
+<li><a href="#exploring-other-aesthetics"
+id="toc-exploring-other-aesthetics">Exploring other aesthetics</a>
+<ul>
+<li><a href="#color" id="toc-color">Color</a></li>
+<li><a href="#shape" id="toc-shape">Shape</a></li>
+<li><a href="#size" id="toc-size">Size</a></li>
+<li><a href="#faceting" id="toc-faceting">Faceting</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#line-plots" id="toc-line-plots">Line plots</a></li>
+<li><a href="#saving-plots-to-file" id="toc-saving-plots-to-file">Saving
+plots to file</a></li>
+<li><a href="#bar-plots" id="toc-bar-plots">Bar plots</a>
+<ul>
+<li><a href="#alternate-positions"
+id="toc-alternate-positions">Alternate <code>position</code>s</a></li>
+</ul></li>
+<li><a href="#summary" id="toc-summary">Summary</a></li>
+<li><a href="#resources" id="toc-resources">Resources</a></li>
+</ul>
+</div>
+
+<style type="text/css">
+
+body, td {
+   font-size: 18px;
+}
+code.r{
+  font-size: 12px;
+}
+pre {
+  font-size: 12px
+}
+
+</style>
+<div id="overview" class="section level1">
+<h1>Overview</h1>
+<p>In this lesson we will work with <code>ggplot2</code> and its
+“grammar of graphics” to create a variety of plots using the
+<code>gapminder</code> data we saw in the last lesson.</p>
+</div>
+<div id="grammar-of-graphics" class="section level1">
+<h1>Grammar of graphics</h1>
+<p>When people talk about <code>ggplot2</code> you may hear them use the
+phrase “grammar of graphics,” which is a conception of statistical
+graphics developed by Leland Wilkinson. The main components of the
+grammar (in bold) are defined as follows in the book <a
+href="https://ggplot2-book.org">ggplot2: Elegant Graphics for Data
+Analysis</a>.</p>
+<blockquote>
+<p>All plots are composed of the <strong>data</strong>, the information
+to visualize, and a <strong>mapping</strong>, the description of the
+data’s variables are mapped to aesthetic attributes. There are five
+mapping components:</p>
+<ul>
+<li>A <strong>layer</strong> is a collection of geometric elements and
+statistical transformations. Geometric elements, <strong>geom</strong>s
+for short, represent what you actually see in the plot: points, lines,
+polygons, etc. Statistical transformations, <strong>stat</strong>s for
+short, summarise the data: for example, binning and counting
+observations to create a histogram, or fitting a linear model.</li>
+<li><strong>Scale</strong>s map values in the data space to values in
+the aesthetic space. This includes the use of colour, shape or size.
+Scales also draw the legend and axes, which make it possible to read the
+original data values from the plot (an inverse mapping).</li>
+<li>A <strong>coord</strong>, or coordinate system, describes how data
+coordinates are mapped to the plane of the graphic. It also provides
+axes and gridlines to help read the graph. We normally use the Cartesian
+coordinate system, but a number of others are available, including polar
+coordinates and map projections.</li>
+<li>A <strong>facet</strong> specifies how to break up and display
+subsets of data as small multiples. This is also known as conditioning
+or latticing/trellising.</li>
+<li>A <strong>theme</strong> controls the finer points of display, like
+the font size and background colour. While the defaults in ggplot2 have
+been chosen with care, you may need to consult other references to
+create an attractive plot.</li>
+</ul>
+</blockquote>
+<p>Remembering all of this isn’t necessary for generating plots quickly
+with <code>ggplot2</code>, so don’t worry if these concepts aren’t
+completely clear at first. As you work with <code>ggplot2</code> you
+will start to get a sense for how these things fit together and what
+function calls to use.</p>
+</div>
+<div id="scatter-plots" class="section level1">
+<h1>Scatter plots</h1>
+<p>We first load the <code>ggplot2</code> library:</p>
+<pre class="r"><code>library(ggplot2)</code></pre>
+<p>The plots you generate with <code>ggplot2</code> will usually conform
+to the template:</p>
+<pre class="r"><code>ggplot(data = &lt;DATA&gt;, mapping = aes(&lt;MAPPINGS&gt;)) +
+        &lt;GEOM_FUNCTION&gt;() +
+        &lt;COORD_FUNCTION&gt;() +
+        &lt;SCALE_FUNCTION&gt;() +
+        &lt;THEME_FUNCTION&gt;()</code></pre>
+<p>We may not always use coordinate, scale, and theme functions, but at
+minimum we <strong>must</strong> specify the data, mapping, and geometry
+functions. <code>ggplot2</code> functions need data in the ‘long’
+format, i.e., a column for every dimension, and a row for every
+observation. Well-structured data will save you lots of time when making
+figures with <code>ggplot2</code>. The <code>gapminder</code> data that
+we have been using is already in the format best-suited for
+<code>ggplot2</code>, but keep in mind you might need to use the
+<code>dplyr</code> functions we learned in the last lesson to get to
+this form for other data you may encounter.</p>
+<p>ggplots can be built iteratively, which is great for understanding
+what each addition does to the resulting plot.</p>
+<ol style="list-style-type: decimal">
+<li>Use the <code>ggplot()</code> function and bind the plot to the
+<code>gapminder</code> data frame with the <code>data</code>
+argument:</li>
+</ol>
+<pre class="r"><code>ggplot(data = gapminder)</code></pre>
+<p><img src="fig/06-ggplot_1-1.png" width="816" style="display: block; margin: auto;" /></p>
+<p>This plot is empty because we told it what data to use, but neither
+the mappings nor geometries.</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Let’s define a mapping (using the aesthetic (<code>aes</code>)
+function), by selecting the variables to be plotted and specifying how
+to present them in the graph. First we’ll specify x/y axes, but later we
+will see how to use size, shape, color, etc.</li>
+</ol>
+<pre class="r"><code>ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp))</code></pre>
+<p><img src="fig/06-ggplot_2-1.png" width="816" style="display: block; margin: auto;" /></p>
+<p>This is a little better in that we at least have axes, but there is
+still no data on the plot because we didn’t specify a geometry.</p>
+<ol start="3" style="list-style-type: decimal">
+<li>Now let’s add a ‘geom’ – graphical representation of the data in the
+plot (points, lines, bars). <code>ggplot2</code> offers many different
+geoms; we will use some common ones today, including:
+<ul>
+<li><code>geom_point()</code> for scatter plots, dot plots, etc.</li>
+<li><code>geom_line()</code> for trend lines, time series, etc.</li>
+<li><code>geom_barplot()</code> for, well, boxplots!</li>
+<li><code>geom_boxplot()</code> distributions.</li>
+</ul></li>
+</ol>
+<p>To add a geom to the plot use the <code>+</code> operator (this is
+the <code>ggplot</code> version of the pipe from the previous lesson).
+Because we have two continuous variables, let’s use
+<code>geom_point()</code> first:</p>
+<pre class="r"><code>ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp)) + geom_point()</code></pre>
+<p><img src="fig/06-first-ggplot-1.png" width="816" style="display: block; margin: auto;" /></p>
+<p>The <code>+</code> in the <code>ggplot2</code> package is
+particularly useful because it allows you to modify existing
+<code>ggplot</code> objects. Now we might want to change some things
+like the axis labels and add a title to the plot.</p>
+<ol start="4" style="list-style-type: decimal">
+<li>We can modify plot titles, axis labels, and their sizes, colors,
+etc. using theme functions. Let’s give the axis labels better names, and
+give the plot a title using the <code>labs()</code> function.</li>
+</ol>
+<pre class="r"><code>ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp)) +
+    geom_point() +
+    labs(title = &#39;GDP per Capita vs Life Expectancy&#39;, x = &#39;GDP per Capita&#39;, y = &#39;Life Expectancy&#39;)</code></pre>
+<p><img src="fig/06-first-ggplot-labels-1.png" width="816" style="display: block; margin: auto;" /></p>
+<p>Now we have clearer labels and a good summary title. But what if
+we’re not keen on that gray background? We can use a theme function to
+change the look and feel of the graph. The <a
+href="https://ggplot2-book.org/polishing.html">Themes section</a> of the
+ggplot2 book provides a good overview of theming options.</p>
+<ol start="5" style="list-style-type: decimal">
+<li>Let’s change the theme to something lighter:</li>
+</ol>
+<pre class="r"><code>ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp)) +
+    geom_point() +
+    labs(title = &#39;GDP per Capita vs Life Expectancy&#39;, x = &#39;GDP per Capita&#39;, y = &#39;Life Expectancy&#39;) +
+    theme_bw()</code></pre>
+<p><img src="fig/06-first-ggplot-theme-1.png" width="816" style="display: block; margin: auto;" /></p>
+<div id="storing-plots-as-objects" class="section level2">
+<h2>Storing plots as objects</h2>
+<p>Base graphics in R typically don’t allow plots to be saved and
+modified as objects, but you can with ggplots. This can be helpful for
+storing a base version of a plot to tinker with more easily without
+having to write some of the same code over and over again. For
+example:</p>
+<pre class="r"><code>base_plot = ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp))</code></pre>
+<p>And from here we can try some different things out, like changing the
+color of all the points:</p>
+<pre class="r"><code>base_plot + geom_point(color = &#39;blue&#39;)</code></pre>
+<p><img src="fig/06-blue-ggplot-1.png" width="816" style="display: block; margin: auto;" /></p>
+<p>Or we can make the points a little transparent:</p>
+<pre class="r"><code>base_plot + geom_point(alpha = 0.5)</code></pre>
+<p><img src="fig/06-transparent-ggplot-1.png" width="816" style="display: block; margin: auto;" /></p>
+<blockquote>
+<h2 id="tip">Tip</h2>
+<ul>
+<li>Anything you put in the <code>ggplot()</code> function can be seen
+by any geom layers that you add (i.e., these are universal plot
+settings). This includes the x- and y-axis mapping you set up in
+<code>aes()</code>.</li>
+<li>You can also specify mappings for a given geom independently of the
+mappings defined globally in the <code>ggplot()</code> function.</li>
+<li>The <code>+</code> sign used to add new layers must be placed at the
+end of the line containing the <em>previous</em> layer.</li>
+</ul>
+</blockquote>
+</div>
+<div id="exploring-other-aesthetics" class="section level2">
+<h2>Exploring other aesthetics</h2>
+<div id="color" class="section level3">
+<h3>Color</h3>
+<p>To color each continent in the plot differently, you can specify that
+of the data to use as the <code>color</code> in the aesthetic
+(<code>aes()</code>) funciton.</p>
+<pre class="r"><code>ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp, color = continent)) +
+    geom_point() +
+    labs(title = &#39;GDP per Capita vs Life Expectancy&#39;, x = &#39;GDP per Capita&#39;, y = &#39;Life Expectancy&#39;) +
+    theme_bw()</code></pre>
+<p><img src="fig/06-color-by-continent1-1.png" width="816" style="display: block; margin: auto;" /></p>
+<p>You can also change the colors that are used by specifying a named
+palette, or by manually defining the colors. <a
+href="https://r-graph-gallery.com/38-rcolorbrewers-palettes">This
+page</a> shows some of the named palettes which are available, and
+<code>?scale_colour_brewer</code> also shows the names of the
+palettes.</p>
+<pre class="r"><code>ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp, color = continent)) +
+    geom_point() +
+    labs(title = &#39;GDP per Capita vs Life Expectancy&#39;, x = &#39;GDP per Capita&#39;, y = &#39;Life Expectancy&#39;) +
+    scale_color_brewer(palette = &#39;Set3&#39;) +
+    theme_bw()</code></pre>
+<p><img src="fig/06-color-by-continent2-1.png" width="816" style="display: block; margin: auto;" /></p>
+</div>
+<div id="shape" class="section level3">
+<h3>Shape</h3>
+<p>You can also alter the shape of the points by specifying
+<code>shape</code> in the <code>aes()</code> function:</p>
+<pre class="r"><code>ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp, shape = continent)) +
+    geom_point() +
+    labs(title = &#39;GDP per Capita vs Life Expectancy&#39;, x = &#39;GDP per Capita&#39;, y = &#39;Life Expectancy&#39;) +
+    theme_bw()</code></pre>
+<p><img src="fig/06-shape-by-continent-1.png" width="816" style="display: block; margin: auto;" /></p>
+</div>
+<div id="size" class="section level3">
+<h3>Size</h3>
+<p>You can alter the size of points by specifying <code>size</code> in
+the <code>aes()</code> function while also using the continents as a
+<code>color</code>. Let’s save this plot as an object to use later in
+this lesson.</p>
+<pre class="r"><code>gdp_life_plot &lt;- ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp, color = continent, size = pop)) +
+    geom_point(alpha = 0.5) +
+    labs(title = &#39;GDP per Capita vs Life Expectancy (Size by Population)&#39;, x = &#39;GDP per Capita&#39;, y = &#39;Life Expectancy&#39;) +
+    theme_bw()
+# When saving a plot as an object, RStudio won&#39;t automatically display it
+gdp_life_plot</code></pre>
+<p><img src="fig/06-size-by-pop-1.png" width="816" style="display: block; margin: auto;" /></p>
+<p>In this plot it looks like there are some outlier countries with very
+high GDP per capita, with mid-range life expectancy. How can we figure
+out what those countries might be? We have the <code>gapminder</code>
+data, and we’ve learned previously how to <code>filter()</code> the data
+based on certain conditions, so let’s practice and see if we can find
+those outliers.</p>
+<blockquote>
+<h2 id="exercise">Exercise</h2>
+<p>Use the <code>filter()</code> function on the <code>gapminder</code>
+data to help determine what four countries lie furthest to the right in
+the above plot.</p>
+</blockquote>
+<details>
+<summary>
+Solution
+</summary>
+<pre class="r"><code>gapminder %&gt;% filter(gdpPercap &gt; 90000)</code></pre>
+<pre><code># A tibble: 4 × 7
+  country  year    pop continent lifeExp gdpPercap    total_gdp
+  &lt;chr&gt;   &lt;int&gt;  &lt;dbl&gt; &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;
+1 Kuwait   1952 160000 Asia         55.6   108382. 17341176464 
+2 Kuwait   1957 212846 Asia         58.0   113523. 24162944745.
+3 Kuwait   1962 358266 Asia         60.5    95458. 34199395868.
+4 Kuwait   1972 841934 Asia         67.7   109348. 92063687055.</code></pre>
+So Kuwait, in the years 1952, 1957, 1962, and 1972 are the outliers.
+With this exercise we’ve also done a quick sanity check on the plot. We
+implicitly verified three pieces of information: the outliers are
+considered “Asian” countries so the color is correct, the life
+expectencies match what is plotted, and so does the GDP per capita.
+</details>
+<p><br></p>
+</div>
+<div id="faceting" class="section level3">
+<h3>Faceting</h3>
+<p><code>ggplot2</code> has a special technique called <em>faceting</em>
+that allows us to split one plot into multiple plots based on a factor
+in the data. Let’s use it to split our plot into five panels, one for
+each continent.</p>
+<pre class="r"><code>ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp, color = continent)) +
+    geom_point() +
+    facet_grid(. ~ continent) +
+    labs(title = &#39;GDP per Capita vs Life Expectancy&#39;, x = &#39;GDP per Capita&#39;, y = &#39;Life Expectancy&#39;) +
+    theme_bw()</code></pre>
+<p><img src="fig/06-first-facet-1.png" width="816" style="display: block; margin: auto;" /></p>
+<p>We can also experiment with stacking the facets vertically, rather
+than horizontally. The <code>facet_grid</code> geometry allows you to
+explicitly specify how you want your plots to be arranged via formula
+notation (<code>rows ~ columns</code>; a <code>.</code> can be used as a
+placeholder that indicates only one row or column).</p>
+<pre class="r"><code>ggplot(data = gapminder, aes(x = gdpPercap, y = lifeExp, color = continent)) +
+    geom_point() +
+    facet_grid(continent ~ .) +
+    labs(title = &#39;GDP per Capita vs Life Expectancy&#39;, x = &#39;GDP per Capita&#39;, y = &#39;Life Expectancy&#39;) +
+    theme_bw()</code></pre>
+<p><img src="fig/06-second-facet-1.png" width="816" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+</div>
+<div id="line-plots" class="section level1">
+<h1>Line plots</h1>
+<p>We’ve explored a lot of options with the <code>geom_point()</code>
+geometry, but we should expand our horizons to other geometries. Let’s
+first create a subset of the <code>gapminder</code> data limited only to
+Poland and plot the GDP per capita over all the years for which we have
+data as a line plot.</p>
+<blockquote>
+<h2 id="exercise-1">Exercise</h2>
+<p>Use the <code>filter()</code> function to select only the Poland data
+from the <code>gapminder</code> data, and save it as as an object named
+“poland”.</p>
+</blockquote>
+<details>
+<summary>
+Solution
+</summary>
+<pre class="r"><code>poland = gapminder %&gt;% filter(country == &#39;Poland&#39;)
+poland</code></pre>
+<pre><code># A tibble: 12 × 7
+   country  year      pop continent lifeExp gdpPercap     total_gdp
+   &lt;chr&gt;   &lt;int&gt;    &lt;dbl&gt; &lt;chr&gt;       &lt;dbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;
+ 1 Poland   1952 25730551 Europe       61.3     4029. 103676873316.
+ 2 Poland   1957 28235346 Europe       65.8     4734. 133673272043.
+ 3 Poland   1962 30329617 Europe       67.6     5339. 161922307755.
+ 4 Poland   1967 31785378 Europe       69.6     6557. 208421579589.
+ 5 Poland   1972 33039545 Europe       70.8     8007. 264531348088.
+ 6 Poland   1977 34621254 Europe       70.7     9508. 329183780347.
+ 7 Poland   1982 36227381 Europe       71.3     8452. 306176833715.
+ 8 Poland   1987 37740710 Europe       71.0     9082. 342774381701.
+ 9 Poland   1992 38370697 Europe       71.0     7739. 296946267448.
+10 Poland   1997 38654957 Europe       72.8    10160. 392718270288.
+11 Poland   2002 38625976 Europe       74.7    12002. 463598198650.
+12 Poland   2007 38518241 Europe       75.6    15390. 592792827796.</code></pre>
+</details>
+<p><br></p>
+<blockquote>
+<h2 id="exercise-2">Exercise</h2>
+<p>For the <code>poland</code> subset of the <code>gapminder</code>
+data, plot the life expectancy as a function of the year. Make sure to
+label the axes and give the plot an appropriate title. Make sure to save
+your plot as an object called “poland_plot”. Hint: Try the
+<code>geom_line()</code> geometry.</p>
+</blockquote>
+<details>
+<summary>
+Solution
+</summary>
+<pre class="r"><code>poland_plot &lt;- ggplot(data = poland, aes(x = year, y = gdpPercap)) +
+    geom_line() +
+    labs(x = &#39;Year&#39;, y = &#39;GDP per Capita&#39;, title = &#39;Polish GDP per Capita Over Time&#39;)
+poland_plot</code></pre>
+<img src="fig/06-lineplot-challenge-1.png" width="816" style="display: block; margin: auto;" />
+</details>
+<p><br></p>
+<p>This is excellent! Now let’s consider plotting a similar line graph
+of GDP per capita across time for <strong>all countries</strong> on the
+<strong>same axes</strong>. And let’s color the lines by their
+continent. Perhaps we can take our line plot above as a guide:</p>
+<pre class="r"><code>ggplot(data = gapminder, aes(x = year, y = gdpPercap, color = continent)) +
+    geom_line() +
+    labs(title = &#39;GDP per Capita Over Time by Country&#39;, x = &#39;Year&#39;, y = &#39;GDP per Capita&#39;) +
+    theme_bw()</code></pre>
+<p>We were hoping for lines connecting corresponding country data, but
+we didn’t tell <code>ggplot2</code> anything about country. There is a
+parameter of <code>aes()</code> called <code>group</code> which can help
+us. It will tell ggplot to first group the data by a column of the data,
+in this we probably want <code>country</code>. What happens if we try
+that? (Let’s also save this plot as an object to use later.)</p>
+<pre class="r"><code>gdp_over_time_plot &lt;- ggplot(data = gapminder, aes(x = year, y = gdpPercap, color = continent, group = country)) +
+    geom_line() +
+    labs(title = &#39;GDP per Capita Over Time by Country&#39;, x = &#39;Year&#39;, y = &#39;GDP per Capita&#39;) +
+    theme_bw()
+gdp_over_time_plot</code></pre>
+<p><img src="fig/06-second_line_plot-1.png" width="816" style="display: block; margin: auto;" /></p>
+<p>And now we have a spaghetti plot!</p>
+</div>
+<div id="saving-plots-to-file" class="section level1">
+<h1>Saving plots to file</h1>
+<p>Let’s take a brief pause from experimenting with plots and learn how
+to save plots as image files. We should have three plots that we’ve
+saved as objects: <code>gdp_life_plot</code>, <code>poland_plot</code>,
+and <code>gdp_over_time_plot</code>. Let’s save these plots as files
+using the <code>ggsave()</code> function.</p>
+<p>The <code>ggsave()</code> function is an easy way to specify which
+plots to save, at what location, at what size and resolution, and in
+what format. Let’s first have a look at the help file to figure out
+which parameters we should pay attention to.</p>
+<pre class="r"><code>?ggsave</code></pre>
+<p>The <code>filename</code> parameter can determine what format to
+write the file in based on the extension (e.g. <code>.tiff</code>,
+<code>.png</code>, <code>.pdf</code>, or <code>.jpeg</code>). Next the
+<code>height</code> and <code>width</code> can be specified in any
+number of <code>units</code> to get the exact size figure you prefer.
+Finally, the <code>dpi</code> parameter specifies the resolution in
+“dots per inch”, and this parameter can ensure that the plots you output
+are sufficiently high-quality to submit as part of a publication to a
+journal. Typically 300dpi is sufficient. With this in mind, let’s save
+the <code>gdp_life_plot</code>:</p>
+<pre class="r"><code>ggsave(filename = &#39;gdp_life_plot.png&#39;, plot = gdp_life_plot, width = 6, height = 6, units = &#39;in&#39;, dpi = 300)</code></pre>
+</div>
+<div id="bar-plots" class="section level1">
+<h1>Bar plots</h1>
+<p>Let’s next create a bar plot that shows the global GDP over time with
+continent-wise contributions separated by color. Let’s first mold the
+fine-grained <code>gapminder</code> data into a summarized form where we
+can see the totals per continent per year directly rather than try to
+rely on <code>ggplot2</code> doing the “right thing”.</p>
+<pre class="r"><code>gdp_by_continent_year = gapminder %&gt;%
+    group_by(continent, year) %&gt;%
+    summarize(aggregate_gdp = sum(total_gdp))</code></pre>
+<pre><code>`summarise()` has grouped output by &#39;continent&#39;. You can override using the `.groups` argument.</code></pre>
+<pre class="r"><code>gdp_by_continent_year</code></pre>
+<pre><code># A tibble: 60 × 3
+# Groups:   continent [5]
+   continent  year aggregate_gdp
+   &lt;chr&gt;     &lt;int&gt;         &lt;dbl&gt;
+ 1 Africa     1952       3.12e11
+ 2 Africa     1957       3.83e11
+ 3 Africa     1962       4.57e11
+ 4 Africa     1967       5.95e11
+ 5 Africa     1972       7.84e11
+ 6 Africa     1977       9.72e11
+ 7 Africa     1982       1.15e12
+ 8 Africa     1987       1.25e12
+ 9 Africa     1992       1.37e12
+10 Africa     1997       1.56e12
+# … with 50 more rows</code></pre>
+<p>Let’s also summarize the data by year only, we’ll use this in a
+moment:</p>
+<pre class="r"><code>gdp_by_year = gapminder %&gt;%
+    group_by(year) %&gt;%
+    summarize(aggregate_gdp = sum(total_gdp))
+gdp_by_year</code></pre>
+<pre><code># A tibble: 12 × 2
+    year aggregate_gdp
+   &lt;int&gt;         &lt;dbl&gt;
+ 1  1952       7.04e12
+ 2  1957       8.90e12
+ 3  1962       1.10e13
+ 4  1967       1.42e13
+ 5  1972       1.84e13
+ 6  1977       2.23e13
+ 7  1982       2.54e13
+ 8  1987       3.01e13
+ 9  1992       3.45e13
+10  1997       4.10e13
+11  2002       4.73e13
+12  2007       5.81e13</code></pre>
+<p>Now, to build our plot, let’s look at the help function for
+<code>geom_bar()</code>:</p>
+<pre><code>?geom_bar</code></pre>
+<p>Looking through the description:</p>
+<ul>
+<li><code>geom_bar()</code> makes the height of the bar proportional to
+the number of cases in each group.</li>
+<li>If you want the heights of the bars to represent values in the data,
+use <code>geom_col()</code> instead.</li>
+</ul>
+<p>Since we want the height of the bars to represent the values of the
+<code>aggregate_gdp</code> column, we should be using
+<code>geom_col()</code>, a relative of <code>geom_bar()</code>. To make
+this graph, it’s clear we want the <code>year</code> on the x-axis, the
+<code>aggregate_gdp</code> on the y-axis, and if we want to separate the
+continents apart in the graph, we will use a new aesthetic parameter
+called <code>fill</code> and assign it <code>continent</code>.</p>
+<pre class="r"><code>ggplot(data = gdp_by_continent_year, aes(x = year, y = aggregate_gdp, fill = continent)) + geom_col()</code></pre>
+<p><img src="fig/06-barplot1-1.png" width="816" style="display: block; margin: auto;" /></p>
+<p>This is a good start. The x-axis doesn’t label each bar with the
+year, which can make the graph difficult to read. This is because in
+<code>gdp_by_continent_year</code> the <code>year</code> column is
+considered an integer. We could coerce the column to a character and
+remake the graph.</p>
+<pre class="r"><code>gdp_by_continent_year$year = as.character(gdp_by_continent_year$year)</code></pre>
+<p>And while we’re at it, let’s clean up the labels a bit, and save the
+plot as an object.</p>
+<pre class="r"><code>aggregate_gdp_plot = ggplot(data = gdp_by_continent_year, aes(x = year, y = aggregate_gdp, fill = continent)) +
+    geom_col() +
+    labs(title = &#39;Global GDP Over Time (by continent)&#39;, x = &#39;Year&#39;, y = &#39;Aggregate GDP&#39;, fill = &#39;Continent&#39;)
+aggregate_gdp_plot</code></pre>
+<p><img src="fig/06-barplot2-1.png" width="816" style="display: block; margin: auto;" /></p>
+<p>Let’s verify that this plot is summing up the global GDP as we’d
+expect. We created <code>gdp_by_year</code>:</p>
+<pre class="r"><code>gdp_by_year</code></pre>
+<pre><code># A tibble: 12 × 2
+    year aggregate_gdp
+   &lt;int&gt;         &lt;dbl&gt;
+ 1  1952       7.04e12
+ 2  1957       8.90e12
+ 3  1962       1.10e13
+ 4  1967       1.42e13
+ 5  1972       1.84e13
+ 6  1977       2.23e13
+ 7  1982       2.54e13
+ 8  1987       3.01e13
+ 9  1992       3.45e13
+10  1997       4.10e13
+11  2002       4.73e13
+12  2007       5.81e13</code></pre>
+<p>We could spot check these values by eye, or we could add a layer to
+the plot quickly in the form of a horizontal line to see if the data
+matches up with <code>geom_hline()</code>. It looks like in 1977, global
+GDP was around $2.23 trillion, so if we add a horizontal line at that
+value, it should hit the top of the 1977 bar.</p>
+<pre class="r"><code>aggregate_gdp_plot + geom_hline(yintercept = 2.23e13)</code></pre>
+<p><img src="fig/06-bar-plot-check-1.png" width="816" style="display: block; margin: auto;" /></p>
+<p>That looks correct, suggesting that the plot matches our
+expectations!</p>
+<div id="alternate-positions" class="section level2">
+<h2>Alternate <code>position</code>s</h2>
+<p>In the above plot we “stacked” the continents on top of each other
+and that showed us the aggregate global GDP, but we’re left with a more
+qualitiative sense for each continent’s GDP over time because of the
+stacked nature of the plot (i.e. from the stacked plot, what is the
+aggregate Asian GDP in 2007?). There is a <code>position</code>
+parameter in <code>geom_bar()</code> and <code>geom_col()</code> which
+controls this behavior.</p>
+<pre class="r"><code>ggplot(data = gdp_by_continent_year, aes(x = year, y = aggregate_gdp, fill = continent)) +
+    geom_col(position = &#39;dodge&#39;) +
+    labs(title = &#39;Global GDP Over Time (by continent)&#39;, x = &#39;Year&#39;, y = &#39;Aggregate GDP&#39;, fill = &#39;Continent&#39;)</code></pre>
+<p><img src="fig/06-bar-plot-dodge-1.png" width="816" style="display: block; margin: auto;" /></p>
+<p>Now we can directly see each continent’s aggregate GDP over time.</p>
+</div>
+</div>
+<div id="summary" class="section level1">
+<h1>Summary</h1>
+<p>In this lesson we’ve introduced the basic concepts underpinnning
+ggplot2:</p>
+<ul>
+<li>Data</li>
+<li>Mappings</li>
+<li>Layers</li>
+<li>Geoms</li>
+<li>Stats</li>
+<li>Scales</li>
+<li>Coords</li>
+<li>Facets</li>
+<li>Themes</li>
+</ul>
+<p>We’ve introduced a number of specific geometries:</p>
+<ul>
+<li><code>geom_point()</code></li>
+<li><code>geom_line()</code></li>
+<li><code>geom_bar()</code> and <code>geom_col()</code></li>
+</ul>
+<p>We explored various customizations:</p>
+<ul>
+<li>Color palettes</li>
+<li>Plot, axis, and legend titles</li>
+</ul>
+<p>We explored how to save our plots in different formats and
+resolutions to ensure publication quality graphics.</p>
+<p>Finally, we learned the importance of verifying plots of data by
+making corresponding transformations and syncing up the results. In
+essence, having a data artifact that is in one-to-one correspondence
+with a plot can help in the explanatory and troubleshooting process.</p>
+</div>
+<div id="resources" class="section level1">
+<h1>Resources</h1>
+<ul>
+<li><a href="https://ggplot2-book.org/introduction.html">ggplot2:
+Elegant Graphics for Data Analysis</a> is a definitive book of the
+Grammar of Graphics and <code>ggplot2</code> implementation.</li>
+<li><a href="https://ggplot2.tidyverse.org/">ggplot2 official page</a>
+is the official landing page describing ggplot2 as part of the
+tidyverse.</li>
+<li><a href="https://patchwork.data-imaginist.com/">patchwork</a>, a
+package to easily add plots together!</li>
+</ul>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
