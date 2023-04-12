@@ -24,6 +24,8 @@ render('source/workshop_setup/setup_instructions.md', output_dir='html/workshop_
 render('source/workshop_setup/setup_instructions_advanced.md', output_dir='html/workshop_setup/')
 render_site('source/index.md')
 
+render_site('source/welcome.Rmd')
+
 render_site('source/Module00_Introduction.md')
 
 render_site('source/r-01-introduction.Rmd')

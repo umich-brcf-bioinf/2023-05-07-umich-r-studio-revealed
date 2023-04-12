@@ -1,0 +1,63 @@
+```{r, include = FALSE}
+source("../bin/chunk-options.R")
+knitr_fig_path("welcome-")
+```
+
+## An Introduction to R and RStudio
+
+Welcome! We're excited to give you an introduction to R and RStudio at ABRF. The document you're looking at is created from an R Markdown document, which is really just a text file with some formatting that lets it run code and display tables and figures inline.
+
+## Loading Packages
+
+Let's begin by loading three packages, `tidyverse`, `rmarkdown`, and `knitr`.  The `tidyverse` package contains many useful packages for data manipulation and visualization. We'll go into more depth on those functions as the day goes on. The `rmarkdown` and `knitr` packages "knit" the R Markdown document into a polished web page.
+
+```{r, load_libraries}
+library(tidyverse)
+library(rmarkdown)
+library(knitr)
+```
+
+## Built-in Data
+
+There is a built in data set called `iris`, that we'll use to quickly demonstrate some of what `tidyverse` can do. First, let's take a peek at the first few rows of `iris` and format it as a nice table.
+
+```{r, load_iris}
+kable(head(iris))
+```
+
+## Summarizing Data
+
+We can summarize the data by using the built-in R function `summary()`.
+
+```{r, summary_iris}
+summary(iris)
+```
+
+We can also use some functions in the `dplyr` package to extract summaries we can define, and then use the `kable()` function to format the table as we did above.
+
+```{r, summary_by_species}
+phenotypes_by_species = iris %>% 
+    group_by(Species) %>% 
+    summarize(
+        mean_sepal_length = mean(Sepal.Length),
+        mean_sepal_width = mean(Sepal.Width),
+        mean_petal_length = mean(Petal.Length),
+        mean_petal_width = mean(Petal.Width))
+
+kable(phenotypes_by_species)
+```
+
+## Visualizing Data
+
+Finally, it doesn't take much code to generate a figure showing how different the petal widths can be among different species of irises. We do familiar things like decide what should be on the x-axis, y-axis, and what kind of plot we want. We can also change the axis labels, the plot title, and much more.
+
+```{r, visualize_iris}
+ggplot(iris, aes(x = Species, y = Petal.Width)) + 
+    geom_violin() + geom_jitter(width = 0.15) + 
+    theme_bw() + 
+    labs(title = 'Petal Width by Species', x = 'Species' , y = 'Petal Width')
+```
+
+## Why R Markdown?
+
+R Markdown enables you to build easy to read reports about your data that contain narrative, code, and results, all as a nicely packaged HTML or PDF document that can easily be shared with collaborators. 
