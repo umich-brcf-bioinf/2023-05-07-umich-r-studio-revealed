@@ -1,6 +1,6 @@
-library(tidyverse)
+# Welcome! We're excited to give you an introduction to R and RStudio at ABRF. 
 
-summary(iris)
+library(tidyverse)
 
 phenotypes_by_species = iris %>% 
     group_by(Species) %>% 
@@ -12,7 +12,7 @@ phenotypes_by_species = iris %>%
 
 phenotypes_by_species
 
-ggplot(iris, aes(x = Species, y = Petal.Width)) + 
-    geom_violin() + geom_jitter(width = 0.15) + 
+ggplot(iris, aes(x = Species, y = Petal.Width, fill = Species)) + 
+    geom_boxplot() +
     theme_bw() + 
     labs(title = 'Petal Width by Species', x = 'Species' , y = 'Petal Width')

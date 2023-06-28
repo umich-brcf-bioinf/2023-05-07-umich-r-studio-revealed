@@ -27,12 +27,6 @@ kable(head(iris))
 
 ## Summarizing Data
 
-We can summarize the data by using the built-in R function `summary()`.
-
-```{r, summary_iris}
-summary(iris)
-```
-
 We can also use some functions in the `dplyr` package to extract summaries we can define, and then use the `kable()` function to format the table as we did above.
 
 ```{r, summary_by_species}
@@ -52,8 +46,8 @@ kable(phenotypes_by_species)
 Finally, it doesn't take much code to generate a figure showing how different the petal widths can be among different species of irises. We do familiar things like decide what should be on the x-axis, y-axis, and what kind of plot we want. We can also change the axis labels, the plot title, and much more.
 
 ```{r, visualize_iris}
-ggplot(iris, aes(x = Species, y = Petal.Width)) + 
-    geom_violin() + geom_jitter(width = 0.15) + 
+ggplot(iris, aes(x = Species, y = Petal.Width, fill = Species)) + 
+    geom_boxplot() +
     theme_bw() + 
     labs(title = 'Petal Width by Species', x = 'Species' , y = 'Petal Width')
 ```
